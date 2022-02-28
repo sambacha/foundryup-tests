@@ -1,0 +1,3 @@
+*verify-install-*
+build/
+.DS_Store

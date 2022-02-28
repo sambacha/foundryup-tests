@@ -1,0 +1,4 @@
+git-hash export-subst
+*.sh text eol=lf
+LAST_COMMIT export-subst
+date*.txt filter=dater

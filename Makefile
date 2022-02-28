@@ -8,11 +8,20 @@ SHELLCHECK=docker run --rm $(VOLUME_MOUNTS) -w /v koalaman/shellcheck $(SHELLCHE
 ENVSUBST_VARS=LOAD_SCRIPT_COMMIT_SHA
 
 .PHONY: build
-build: foundryup/install
+build: build/install
 
-foundryup/install: install
+build/install: install
 	mkdir -p $(@D)
 	LOAD_SCRIPT_COMMIT_SHA='$(shell git rev-parse HEAD)' envsubst '$(addprefix $$,$(ENVSUBST_VARS))' < $< > $@
+
+.PHONY: shellcheck
+shellcheck: build/install
+	$(SHELLCHECK) $<
+
+.PHONY: test
+test: build/install
+	cat build/install
+		sh "$<"
 
 .PHONY: clean
 clean:

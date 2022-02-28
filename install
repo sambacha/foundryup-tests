@@ -7,14 +7,8 @@ FOUNDRY_DIR=${FOUNDRY_DIR-"$HOME/.foundry"}
 FOUNDRY_BIN_DIR="$FOUNDRY_DIR/bin"
 FOUNDRY_MAN_DIR="$FOUNDRY_DIR/share/man/man1"
 
+# runs with Makefile to generate hash on CI
 SCRIPT_COMMIT_SHA="${LOAD_SCRIPT_COMMIT_SHA}"
-
-# strip "v" prefix if present
-VERSION="${VERSION#v}"
-
-command_exists() {
-	command -v "$@" > /dev/null 2>&1
-}
 
 FOUNDRYUP='#!/usr/bin/env bash
 set -e
