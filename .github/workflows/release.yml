@@ -36,8 +36,7 @@ jobs:
         shell: bash
         run: |
           make
-          cp target/release/${{ matrix.artifact_name }} ${{ matrix.asset_name }}
-          cp build/* ${{ matrix.asset_name }}
+          cp build/${{ matrix.artifact_name }} ${{ matrix.asset_name }}
           tar -czvf ${{ matrix.asset_name }}${{ matrix.archive_ext }} ${{ matrix.asset_name }}
 
       - name: Generate SHA256 checksum for binary
