@@ -2,10 +2,7 @@
 # this creates a tag release whenever a tag is created
 name: release
 
-on:
-  push:
-    tags:
-      - "*"
+on: [push, repository_dispatch]
 
 jobs:
   publish:
@@ -17,17 +14,19 @@ jobs:
           - os: ubuntu-latest
             asset_name: foundryup-installer
             artifact_name: foundryup
-            archive_ext: .sh
+            archive_ext: .*
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-
-      - name: Install packages (macOS)
-        if: matrix.os == 'macos-latest'
+          persist-credentials: false
+          
+      - name: Install packages (ubuntu-latest)
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
-          brew install coreutils
+          make
+          bash build/install
 
 
       - name: Archive release assets
