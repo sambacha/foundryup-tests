@@ -25,6 +25,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
+          rm -rf build/ || { exit 1 && echo "[FAIL]: build dir"; }
           make
           bash build/install
 
