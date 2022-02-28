@@ -1,0 +1,66 @@
+# GitHub Action Workflow
+# this creates a tag release whenever a tag is created
+name: release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset_name: foundryup-installer
+            artifact_name: foundryup
+            archive_ext: .sh
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+
+      - name: Install packages (macOS)
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          brew install coreutils
+
+
+      - name: Archive release assets
+        if: matrix.os != 'windows-latest'
+        id: archive_release_assets_unix_like
+        shell: bash
+        run: |
+          make
+          cp target/release/${{ matrix.artifact_name }} ${{ matrix.asset_name }}
+          cp build/* ${{ matrix.asset_name }}
+          tar -czvf ${{ matrix.asset_name }}${{ matrix.archive_ext }} ${{ matrix.asset_name }}
+
+      - name: Generate SHA256 checksum for binary
+        if: matrix.os != 'windows-latest'
+        id: checksum_archive_unix_like
+        shell: bash
+        run: |
+          sha256sum ${{ matrix.asset_name }}${{ matrix.archive_ext }} > ${{ matrix.asset_name }}${{ matrix.archive_ext }}.sha256
+      - name: Upload binary to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.asset_name }}${{ matrix.archive_ext }}
+          asset_name: ${{ matrix.asset_name }}${{ matrix.archive_ext }}
+          tag: ${{ github.ref }}
+          overwrite: true
+
+      - name: Upload SHA256 checksum to release
+        if: matrix.os != 'windows-latest'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.asset_name }}${{ matrix.archive_ext }}.sha256
+          asset_name: ${{ matrix.asset_name }}${{ matrix.archive_ext }}.sha256
+          tag: ${{ github.ref }}
+          overwrite: true
