@@ -12,9 +12,9 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            asset_name: foundryup-installer
-            artifact_name: foundryup
-            archive_ext: .*
+            asset_name: foundryup
+            artifact_name: install
+            archive_ext: ''
     steps:
       - uses: actions/checkout@v2
         with:
