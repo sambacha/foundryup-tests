@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+## Note: FOUNDRY_DIR and FOUNDRY_BIN_DIR could point to non existent directory!
+configure_environment() {
+  [[ -z "$FOUNDRY_DIR" ]]    && FOUNDRY_DIR=$HOME/.foundry
+  [[ -z "$FOUNDRY_BIN_DIR" ]] && FOUNDRY_BIN_DIR=$FOUNDRY_DIR/bin
+  return 0
+}
+
+# args:
+# $1 - path from which to resolve version
+resolve_version_from_path() {
+  local basepath=$(basename $1)
+  # everything after first dash (-) is a version
+  echo ${basepath#*-}
+
+  return 0
+}
+
+# args:
+# $1 - path from which to resolve program name
+resolve_program_name_from_path() {
+  local basepath=$(basename $1)
+  # everything before first dash (-) is a program name
+  echo ${basepath%%-*}
+
+  return 0
+}
+
+# args:
+# $1 - program name
+# $2 - program version (optional)
+construct_path() {
+  local path="$FOUNDRY_BIN_DIR/$1"
+  [[ -n "$2" ]] && path="$path-$2"
+
+  echo $path
+  return 0
+}
+
+# args:
+# $1 - program name
+# $2 - program version (optional)
+handle_not_installed() {
+  local msg="Not installed: $1"
+  [[ -n "$2" ]] && msg="$msg $2"
+
+  echo $msg 1>&2
+  return 0
+}
+# args:
+# $1 - environment name
+# example:
+# set_env 'FOO_HOME'
+set_env() {
+  PROGRAM_ENV="$1"
+  return 0
+}
+
+# args:
+# $1 - true|false
+# example:
+# set_path true
+set_path() {
+  PROGRAM_PATH="$1"
+  return 0
+}
+
+exit 0
