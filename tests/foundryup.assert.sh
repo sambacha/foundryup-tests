@@ -46,11 +46,11 @@ testUseProgramNotInstalled() {
 }
 
 testUseProgramNotInstalledInstalledOne() {
-	mkdir $pd/forge-0.1.0
+	mkdir $pd/forge
 
 	local msg=$(
-		use_program forge 1.5 2>&1
+		use_program forge 0.1.0 2>&1
 		assertEquals 1 $?
 	)
-	assertEquals "Not installed: forge 1.5" "$msg"
+	assertEquals "Not installed: forge 0.1.0" "$msg"
 }
