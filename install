@@ -10,6 +10,20 @@ FOUNDRY_MAN_DIR="$FOUNDRY_DIR/share/man/man1"
 # runs with Makefile to generate hash on CI
 SCRIPT_COMMIT_SHA="${LOAD_SCRIPT_COMMIT_SHA}"
 
+PLATFORM="$(uname -s)"
+  case $PLATFORM in
+    Linux)
+      PLATFORM="linux"
+      ;;
+    Darwin)
+      PLATFORM="darwin"
+      ;;
+    *)
+      echo "foundryup: unsupported platform: $PLATFORM"
+      exit 1
+      ;;
+esac
+  
 FOUNDRYUP='#!/usr/bin/env bash
 set -e
 
@@ -157,7 +171,7 @@ esac
 
 # Only add foundryup if it isn't already in PATH.
 if [[ ":$PATH:" != *":${FOUNDRY_BIN_DIR}:"* ]]; then
-	if [[ $OSTYPE == 'darwin'* ]]; then
+	if [[ $PLATFORM == 'darwin'* ]]; then
 		echo >>"$HOME"/.bash_profile && echo "export PATH=\"\$PATH:$FOUNDRY_BIN_DIR\"" >>$$HOME/.bash_profile
 	fi
 	# Add the foundryup directory to the path and ensure the old PATH variables remain.
