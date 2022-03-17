@@ -182,11 +182,11 @@ fi
 
 
 if [[ $SHELL == 'bash'* ]]; then
-mkdir -p "$HOME"/.foundry/etc
-forge completions bash > "$HOME"/.foundry/etc/forge_completions_bash
-cast completions bash > "$HOME"/.foundry/etc/cast_completions_bash
-echo >>"$HOME"/.bash_profile && echo "if [ -f $HOME/.foundry/forge_completions_bash ]; then source $HOME/.foundry/etc/forge_completions_bash fi"  >>$$HOME/.bash_profile
-echo >>"$HOME"/.bash_profile && echo "if [ -f $HOME/.foundry/cast_completions_bash ]; then source $HOME/.foundry/etc/cast_completions_bash fi"  >>$$HOME/.bash_profile
+forge completions bash > /usr/local/etc/bash_completion.d/forge
+cast completions bash > /usr/local/etc/bash_completion.d/cast
+
+source /usr/local/etc/bash_completion
+echo >>"[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion ">>$$HOME/.bash_profile
 fi
 
 echo && echo "Detected your preferred shell is ${PREF_SHELL} and added foundryup to PATH. Run 'source ${PROFILE}' or start a new terminal session to use foundryup."
