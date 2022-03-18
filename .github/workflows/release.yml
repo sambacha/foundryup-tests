@@ -25,6 +25,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
+          set -x
           rm -rf build/ || { exit 1 && echo "[FAIL]: build dir"; }
           make
           bash build/install
@@ -70,6 +71,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ matrix.asset_name }}${{ matrix.archive_ext }}.sha256
-          asset_name: ${{ matrix.asset_name }}${{ matrix.archive_ext }}.sha256
+          asset_name: v-${{ steps.date.outputs.date }}.sha256
           tag: ${{ github.ref }}
           overwrite: true
