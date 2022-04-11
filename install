@@ -185,7 +185,8 @@ if [[ $SHELL == 'bash'* ]]; then
 forge completions bash > /usr/local/etc/bash_completion.d/forge
 cast completions bash > /usr/local/etc/bash_completion.d/cast
 
-source /usr/local/etc/bash_completion
+source /usr/local/etc/bash_completion.d/forge
+source /usr/local/etc/bash_completion.d/cast
 echo >>"[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion ">>$$HOME/.bash_profile
 fi
 
