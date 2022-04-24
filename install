@@ -185,9 +185,9 @@ if [[ $SHELL == 'bash'* ]]; then
 forge completions bash > /usr/local/etc/bash_completion.d/forge
 cast completions bash > /usr/local/etc/bash_completion.d/cast
 
-source /usr/local/etc/bash_completion.d/forge
-source /usr/local/etc/bash_completion.d/cast
-echo >>"[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion ">>$$HOME/.bash_profile
+echo >> "/usr/local/etc/bash_completion.d/forge">>$$HOME/.bash_profile
+echo >> "source /usr/local/etc/bash_completion.d/cast">>$$HOME/.bash_profile
+# echo >>"[ -f /usr/local/etc/bash_completion.d ] && . /usr/local/etc/bash_completion.d ">>$$HOME/.bash_profile
 fi
 
 echo && echo "Detected your preferred shell is ${PREF_SHELL} and added foundryup to PATH. Run 'source ${PROFILE}' or start a new terminal session to use foundryup."
