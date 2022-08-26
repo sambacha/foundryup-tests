@@ -11,44 +11,21 @@ main() {
 
   while [[ $1 ]]; do
     case $1 in
-    --)
-      shift
-      break
-      ;;
+      --)               shift; break;;
 
-    -r | --repo)
-      shift
-      FOUNDRYUP_REPO=$1
-      ;;
-    -b | --branch)
-      shift
-      FOUNDRYUP_BRANCH=$1
-      ;;
-    -v | --version)
-      shift
-      FOUNDRYUP_VERSION=$1
-      ;;
-    -p | --path)
-      shift
-      FOUNDRYUP_LOCAL_REPO=$1
-      ;;
-    -P | --pr)
-      shift
-      FOUNDRYUP_PR=$1
-      ;;
-    -C | --commit)
-      shift
-      FOUNDRYUP_COMMIT=$1
-      ;;
-    -h | --help)
-      usage
-      exit 0
-      ;;
-    *)
-      err "internal error: unknown option "$1"\n"
-      ;;
-    esac
-    shift
+      -r|--repo)        shift; FOUNDRYUP_REPO=$1;;
+      -b|--branch)      shift; FOUNDRYUP_BRANCH=$1;;
+      -v|--version)     shift; FOUNDRYUP_VERSION=$1;;
+      -p|--path)        shift; FOUNDRYUP_LOCAL_REPO=$1;;
+      -P|--pr)          shift; FOUNDRYUP_PR=$1;;
+      -C|--commit)      shift; FOUNDRYUP_COMMIT=$1;;
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      *) 
+        err "internal error: unknown option "$1"\n";;
+    esac; shift
   done
 
   if [ ! -z "$FOUNDRYUP_PR" ]; then
@@ -73,6 +50,7 @@ main() {
     cd $FOUNDRYUP_LOCAL_REPO
     RUSTFLAGS="-C target-cpu=native" ensure cargo build --release # need 4 speed
 
+
     # Remove prior installations if they exist
     rm -f "$FOUNDRY_BIN_DIR/forge"
     rm -f "$FOUNDRY_BIN_DIR/cast"
@@ -96,11 +74,11 @@ main() {
     # Normalize versions (handle channels, versions without v prefix
     if [[ "$FOUNDRYUP_VERSION" == "nightly" ]]; then
       # Locate real nightly tag
-      SHA=$(ensure curl -sSf https://api.github.com/repos/${FOUNDRYUP_REPO}/git/refs/tags/nightly |
-        grep -Eo '"sha"[^,]*' |
-        grep -Eo '[^:]*$' |
-        tr -d '"' |
-        tr -d ' ')
+      SHA=$(ensure curl -sSf https://api.github.com/repos/${FOUNDRYUP_REPO}/git/refs/tags/nightly \
+        | grep -Eo '"sha"[^,]*' \
+        | grep -Eo '[^:]*$' \
+        | tr -d '"' \
+        | tr -d ' ')
       FOUNDRYUP_TAG="nightly-${SHA}"
     elif [[ "$FOUNDRYUP_VERSION" == nightly* ]]; then
       FOUNDRYUP_VERSION="nightly"
@@ -114,15 +92,15 @@ main() {
 
     PLATFORM="$(uname -s)"
     case $PLATFORM in
-    Linux)
-      PLATFORM="linux"
-      ;;
-    Darwin)
-      PLATFORM="darwin"
-      ;;
-    *)
-      err "unsupported platform: $PLATFORM"
-      ;;
+      Linux)
+        PLATFORM="linux"
+        ;;
+      Darwin)
+        PLATFORM="darwin"
+        ;;
+      *)
+        err "unsupported platform: $PLATFORM"
+        ;;
     esac
 
     ARCHITECTURE="$(uname -m)"
@@ -133,7 +111,7 @@ main() {
       else
         ARCHITECTURE="amd64" # Intel.
       fi
-    elif [ "${ARCHITECTURE}" = "arm64" ] || [ "${ARCHITECTURE}" = "aarch64" ]; then
+    elif [ "${ARCHITECTURE}" = "arm64" ] ||[ "${ARCHITECTURE}" = "aarch64" ] ; then
       ARCHITECTURE="arm64" # Arm.
     else
       ARCHITECTURE="amd64" # Amd.
@@ -154,11 +132,11 @@ main() {
     say "installed - $($FOUNDRY_BIN_DIR/cast --version)"
     say "installed - $($FOUNDRY_BIN_DIR/anvil --version)"
     say "done"
-
+    
     if [[ $(which forge) =~ "cargo" ]]; then
       warn "it appears your system has already has forge installed via cargo. you may need to run 'rm $(which forge)' to allow foundryup to take precedence!"
     fi
-
+    
     if [[ $(which cast) =~ "cargo" ]]; then
       warn "it appears your system has already has cast installed via cargo. you may need to run 'rm $(which cast)' to allow foundryup to take precedence!"
     fi
@@ -173,7 +151,7 @@ main() {
 
     if [ ! -d $REPO_PATH ]; then
       # Repo path did not exist, grab the author from the repo, make a directory in .foundry, cd to it and clone.
-      IFS="/" read -ra AUTHOR <<<"$FOUNDRYUP_REPO"
+      IFS="/" read -ra AUTHOR <<< "$FOUNDRYUP_REPO"
       ensure mkdir -p "$FOUNDRY_DIR/$AUTHOR"
       cd "$FOUNDRY_DIR/$AUTHOR"
       ensure git clone https://github.com/${FOUNDRYUP_REPO}
@@ -194,10 +172,10 @@ main() {
     RUSTFLAGS="-C target-cpu=native" ensure cargo install --path ./anvil --bin anvil --locked --force --root $FOUNDRY_DIR
 
     # If help2man is installed, use it to add Foundry man pages.
-    if command -v help2man &>/dev/null; then
-      help2man -N $FOUNDRY_BIN_DIR/forge >$FOUNDRY_MAN_DIR/forge.1
-      help2man -N $FOUNDRY_BIN_DIR/cast >$FOUNDRY_MAN_DIR/cast.1
-      help2man -N $FOUNDRY_BIN_DIR/anvil >$FOUNDRY_MAN_DIR/anvil.1
+    if command -v help2man &> /dev/null ; then
+      help2man -N $FOUNDRY_BIN_DIR/forge > $FOUNDRY_MAN_DIR/forge.1
+      help2man -N $FOUNDRY_BIN_DIR/cast > $FOUNDRY_MAN_DIR/cast.1
+      help2man -N $FOUNDRY_BIN_DIR/anvil > $FOUNDRY_MAN_DIR/anvil.1
     fi
     say "done"
   fi
@@ -243,7 +221,7 @@ need_cmd() {
 }
 
 check_cmd() {
-  command -v "$1" >/dev/null 2>&1
+  command -v "$1" > /dev/null 2>&1
 }
 
 # Run a command that should never fail. If the command fails execution
