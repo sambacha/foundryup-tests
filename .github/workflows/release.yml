@@ -16,7 +16,7 @@ jobs:
             artifact_name: install
             archive_ext: .*
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
           persist-credentials: false
@@ -27,6 +27,7 @@ jobs:
         run: |
           set -x
           rm -rf build/ || { exit 1 && echo "[FAIL]: build dir"; }
+          mkdir -p build/
           make
           bash build/install
 
